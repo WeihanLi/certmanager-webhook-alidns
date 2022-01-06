@@ -1,0 +1,43 @@
+{{ if .Values.issuer.create }}
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app: {{ include "webhook-alidns.name" . }}
+    chart: {{ include "webhook-alidns.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  name: {{ .Values.issuer.secret_name }}
+type: Opaque
+data:
+  {{- range $key, $val := .Values.issuer.secret }}
+  {{ $key }}: {{ $val | b64enc | quote }}
+  {{- end }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: {{ .Values.issuer.email | quote }}
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+    - selector: 
+        dnsNames:
+        - {{ .Values.issuer.host | quote }}
+        - '*.{{ .Values.issuer.host }}'
+      dns01:
+        webhook:
+          config:
+            accessKeyId: {{ .Values.issuer.secret.accessKeyId }}
+            accessKeySecretRef:
+              key: accessKeySecret
+              name: {{ .Values.issuer.secret_name }}
+              regionId: {{ .Values.issuer.regionId | quote }}
+            ttl: 600
+          groupName: {{ .Values.groupName }}
+          solverName: alidns
+{{ end }}

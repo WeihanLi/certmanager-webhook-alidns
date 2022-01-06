@@ -6,14 +6,14 @@
 # solve the DNS01 challenge.
 # This group name should be **unique**, hence using your own company's domain
 # here is recommended.
-groupName: acme.mycompany.com
+groupName: certmanager.webhook.alidns
 
 certManager:
   namespace: cert-manager
   serviceAccountName: cert-manager
 
 image:
-  repository: mycompany/webhook-image
+  repository: kevinniu666/cert-manager-webhook-alidns
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -23,6 +23,16 @@ fullnameOverride: ""
 service:
   type: ClusterIP
   port: 443
+
+issuer:
+  create: false
+  host: "example.com"
+  email: ""
+  regionId: "cn-shanghai"
+  secret_name: "ali-credential"
+  secret:
+    accessKeyId: ""
+    accessKeySecret: ""
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

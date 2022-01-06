@@ -1,54 +1,43 @@
-# ACME webhook example
+# ACME webhook Ali DNS
 
 The ACME issuer type supports an optional 'webhook' solver, which can be used
 to implement custom DNS01 challenge solving logic.
 
-This is useful if you need to use cert-manager with a DNS provider that is not
-officially supported in cert-manager core.
+This is useful if you need to use cert-manager with Ali yun DNS provider.
 
-## Why not in core?
+## Installation
 
-As the project & adoption has grown, there has been an influx of DNS provider
-pull requests to our core codebase. As this number has grown, the test matrix
-has become un-maintainable and so, it's not possible for us to certify that
-providers work to a sufficient level.
+Before use this, your should make sure you had cert-manager installed, if not please install cert-manager firstly.
 
-By creating this 'interface' between cert-manager and DNS providers, we allow
-users to quickly iterate and test out new integrations, and then packaging
-those up themselves as 'extensions' to cert-manager.
+You can install with helm using the following commands:
 
-We can also then provide a standardised 'testing framework', or set of
-conformance tests, which allow us to validate the a DNS provider works as
-expected.
+``` bash
+helm repo add jetstack https://charts.jetstack.io
 
-## Creating your own webhook
+helm repo update
 
-Webhook's themselves are deployed as Kubernetes API services, in order to allow
-administrators to restrict access to webhooks with Kubernetes RBAC.
-
-This is important, as otherwise it'd be possible for anyone with access to your
-webhook to complete ACME challenge validations and obtain certificates.
-
-To make the set up of these webhook's easier, we provide a template repository
-that can be used to get started quickly.
-
-### Creating your own repository
-
-### Running the test suite
-
-All DNS providers **must** run the DNS01 provider conformance testing suite,
-else they will have undetermined behaviour when used with cert-manager.
-
-**It is essential that you configure and run the test suite when creating a
-DNS01 webhook.**
-
-An example Go test file has been provided in [main_test.go](https://github.com/jetstack/cert-manager-webhook-example/blob/master/main_test.go).
-
-You can run the test suite with:
-
-```bash
-$ TEST_ZONE_NAME=example.com. make test
+helm install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --set installCRDs=true --version v1.6.1
 ```
 
-The example file has a number of areas you must fill in and replace with your
-own options in order for tests to pass.
+For more ways to install, see the docs from cert-manager <https://cert-manager.io/docs/installation/>
+
+Install Ali DNS webhook for cert-manager
+
+```bash
+cd deploy/certmanager-webhook-alidns
+
+# render template
+helm template certmanager-webhook-alidns . --set issuer.create=true --set issuer.host=weihanli.top --set issuer.email=weihanli@outlook.com --set issuer.secret.accessKeyId=AliAccessKeyId --set issuer.secret.accessKeySecret=AliAccessKeySecret -n cert-manager
+
+# install without creating ClusterIssuer
+helm install certmanager-webhook-alidns . -n cert-manager
+
+# install with creating ClusterIssuer
+helm install certmanager-webhook-alidns . --set issuer.create=true --set issuer.host=weihanli.top --set issuer.email=weihanli@outlook.com --set issuer.secret.accessKeyId=AliAccessKeyId --set issuer.secret.accessKeySecret=AliAccessKeySecret -n cert-manager
+```
+
+## More
+
+The docker image based on <https://github.com/kevinniu666/cert-manager-webhook-alidns>, you can build your own Dockerfile from source repo, and install with your own image with `--set image.repository=<your-image>`
+
+Troubleshooting guide: <https://cert-manager.io/docs/faq/acme/>

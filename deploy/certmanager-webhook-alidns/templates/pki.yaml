@@ -4,11 +4,11 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ include "example-webhook.selfSignedIssuer" . }}
+  name: {{ include "webhook-alidns.selfSignedIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
+    app: {{ include "webhook-alidns.name" . }}
+    chart: {{ include "webhook-alidns.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -20,19 +20,19 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ include "example-webhook.rootCACertificate" . }}
+  name: {{ include "webhook-alidns.rootCACertificate" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
+    app: {{ include "webhook-alidns.name" . }}
+    chart: {{ include "webhook-alidns.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  secretName: {{ include "example-webhook.rootCACertificate" . }}
+  secretName: {{ include "webhook-alidns.rootCACertificate" . }}
   duration: 43800h # 5y
   issuerRef:
-    name: {{ include "example-webhook.selfSignedIssuer" . }}
-  commonName: "ca.example-webhook.cert-manager"
+    name: {{ include "webhook-alidns.selfSignedIssuer" . }}
+  commonName: "ca.webhook-alidns.cert-manager"
   isCA: true
 
 ---
@@ -41,16 +41,16 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ include "example-webhook.rootCAIssuer" . }}
+  name: {{ include "webhook-alidns.rootCAIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
+    app: {{ include "webhook-alidns.name" . }}
+    chart: {{ include "webhook-alidns.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   ca:
-    secretName: {{ include "example-webhook.rootCACertificate" . }}
+    secretName: {{ include "webhook-alidns.rootCACertificate" . }}
 
 ---
 
@@ -58,19 +58,19 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ include "example-webhook.servingCertificate" . }}
+  name: {{ include "webhook-alidns.servingCertificate" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    app: {{ include "example-webhook.name" . }}
-    chart: {{ include "example-webhook.chart" . }}
+    app: {{ include "webhook-alidns.name" . }}
+    chart: {{ include "webhook-alidns.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  secretName: {{ include "example-webhook.servingCertificate" . }}
+  secretName: {{ include "webhook-alidns.servingCertificate" . }}
   duration: 8760h # 1y
   issuerRef:
-    name: {{ include "example-webhook.rootCAIssuer" . }}
+    name: {{ include "webhook-alidns.rootCAIssuer" . }}
   dnsNames:
-  - {{ include "example-webhook.fullname" . }}
-  - {{ include "example-webhook.fullname" . }}.{{ .Release.Namespace }}
-  - {{ include "example-webhook.fullname" . }}.{{ .Release.Namespace }}.svc
+  - {{ include "webhook-alidns.fullname" . }}
+  - {{ include "webhook-alidns.fullname" . }}.{{ .Release.Namespace }}
+  - {{ include "webhook-alidns.fullname" . }}.{{ .Release.Namespace }}.svc
