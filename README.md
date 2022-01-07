@@ -70,3 +70,4 @@ Troubleshooting guide: <https://cert-manager.io/docs/faq/acme/>
 - <https://cert-manager.io/docs/faq/acme/>
 - <https://cert-manager.io/docs/installation/>
 - <https://cert-manager.io/docs/concepts/>
+- <https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx>
