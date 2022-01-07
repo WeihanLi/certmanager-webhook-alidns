@@ -18,6 +18,11 @@ apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt
+  labels:
+    app: {{ include "webhook-alidns.name" . }}
+    chart: {{ include "webhook-alidns.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
@@ -25,11 +30,7 @@ spec:
     privateKeySecretRef:
       name: letsencrypt
     solvers:
-    - selector: 
-        dnsNames:
-        - {{ .Values.issuer.host | quote }}
-        - '*.{{ .Values.issuer.host }}'
-      dns01:
+    - dns01:
         webhook:
           config:
             accessKeyId: {{ .Values.issuer.secret.accessKeyId }}
@@ -40,4 +41,25 @@ spec:
             ttl: 600
           groupName: {{ .Values.groupName }}
           solverName: alidns
+{{ if .Values.issuer.createCert }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "webhook-alidns.certname" . }}
+  labels:
+    app: {{ include "webhook-alidns.name" . }}
+    chart: {{ include "webhook-alidns.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  commonName: {{ .Values.issuer.host | quote }}
+  dnsNames:
+  - {{ .Values.issuer.host | quote }}
+  - '*.{{ .Values.issuer.host }}'
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt
+  secretName: {{ include "webhook-alidns.certname" . }}
+{{ end }}
 {{ end }}
