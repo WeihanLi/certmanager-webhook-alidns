@@ -48,5 +48,5 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{- define "webhook-alidns.certname" -}}
-{{- printf "%s-cert" .Values.issuer.host | replace "." "-" -}}
+{{- printf "%s-tls-cert" .Values.issuer.host | replace "." "-" -}}
 {{- end -}}

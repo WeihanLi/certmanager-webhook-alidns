@@ -36,8 +36,37 @@ helm install certmanager-webhook-alidns . -n cert-manager
 helm install certmanager-webhook-alidns . --set issuer.create=true --set issuer.host=weihanli.top --set issuer.email=weihanli@outlook.com --set issuer.secret.accessKeyId=AliAccessKeyId --set issuer.secret.accessKeySecret=AliAccessKeySecret -n cert-manager
 ```
 
+## Ingress configure
+
+Configure nginx-ingress default cert tls secret
+
+``` yaml
+controller:
+  extraArgs:
+    default-ssl-certificate: cert-manager/example-com-tls-cert
+```
+
+Install with helm
+
+``` sh
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
+helm repo update
+
+helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --set controller.extraArgs.default-ssl-certificate=cert-manager/example-com-tls-cert
+```
+
 ## More
 
 The docker image based on <https://github.com/kevinniu666/cert-manager-webhook-alidns>, you can build your own Dockerfile from source repo, and install with your own image with `--set image.repository=<your-image>`
 
 Troubleshooting guide: <https://cert-manager.io/docs/faq/acme/>
+
+## References
+
+- <https://github.com/helm/charts/issues/1495#issuecomment-342275665>
+- <https://kubernetes.github.io/ingress-nginx/user-guide/cli-arguments/>
+- <https://kubernetes.github.io/ingress-nginx/troubleshooting/>
+- <https://cert-manager.io/docs/faq/acme/>
+- <https://cert-manager.io/docs/installation/>
+- <https://cert-manager.io/docs/concepts/>
