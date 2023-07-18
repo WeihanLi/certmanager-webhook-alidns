@@ -1,0 +1,40 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  namespace: cert-manager
+spec:
+  acme:
+    email: weihanli@outlook.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+    - dns01:
+        webhook:
+            config:
+              accessTokenSecretRef:
+                key: access-token
+                name: alidns-secrets
+              regionId: "cn-shanghai"
+              secretKeySecretRef:
+                key: secret-key
+                name: alidns-secrets
+            groupName: weihanli.top # groupName must match the one configured on webhook deployment (see Helm chart's values) !
+            solverName: alidns-solver
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: weihanli-top-tls-cert
+  namespace: cert-manager
+spec:
+  secretName: weihanli-top-tls
+  commonName: weihanli.top
+  dnsNames:
+  - weihanli.top
+  - "*.weihanli.top"
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
