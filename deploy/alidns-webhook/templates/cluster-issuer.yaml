@@ -3,8 +3,8 @@ apiVersion: v1
 kind: Secret
 metadata:
   labels:
-    app: {{ include "webhook-alidns.name" . }}
-    chart: {{ include "webhook-alidns.chart" . }}
+    app: {{ include "alidns-webhook.name" . }}
+    chart: {{ include "alidns-webhook.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   name: {{ .Values.issuer.secret_name }}
@@ -19,8 +19,8 @@ kind: ClusterIssuer
 metadata:
   name: letsencrypt
   labels:
-    app: {{ include "webhook-alidns.name" . }}
-    chart: {{ include "webhook-alidns.chart" . }}
+    app: {{ include "alidns-webhook.name" . }}
+    chart: {{ include "alidns-webhook.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -33,12 +33,13 @@ spec:
     - dns01:
         webhook:
           config:
-            accessKeyId: {{ .Values.issuer.secret.accessKeyId }}
-            accessKeySecretRef:
+            accessTokenSecretRef:
+              key: accessKeyId
+              name: {{ .Values.issuer.secret_name }}
+            secretKeySecretRef:
               key: accessKeySecret
               name: {{ .Values.issuer.secret_name }}
-              regionId: {{ .Values.issuer.regionId | quote }}
-            ttl: 600
+            regionId: {{ .Values.issuer.regionId | quote }}
           groupName: {{ .Values.groupName }}
           solverName: alidns-solver
 {{ if .Values.issuer.createCert }}
@@ -46,10 +47,10 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ include "webhook-alidns.certname" . }}
+  name: {{ include "alidns-webhook.certname" . }}
   labels:
-    app: {{ include "webhook-alidns.name" . }}
-    chart: {{ include "webhook-alidns.chart" . }}
+    app: {{ include "alidns-webhook.name" . }}
+    chart: {{ include "alidns-webhook.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -60,6 +61,6 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt
-  secretName: {{ include "webhook-alidns.certname" . }}
+  secretName: {{ include "alidns-webhook.certname" . }}
 {{ end }}
 {{ end }}

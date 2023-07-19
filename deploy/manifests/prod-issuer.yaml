@@ -30,7 +30,7 @@ metadata:
   name: weihanli-top-tls-cert
   namespace: cert-manager
 spec:
-  secretName: weihanli-top-tls
+  secretName: weihanli-top-tls-cert
   commonName: weihanli.top
   dnsNames:
   - weihanli.top
