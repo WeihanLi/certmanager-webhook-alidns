@@ -81,10 +81,10 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
 helm repo update
 
-helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --set controller.extraArgs.default-ssl-certificate=cert-manager/example-com-tls-cert --create-namespace
+helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --set controller.extraArgs.default-ssl-certificate=cert-manager/example-com-tls-cert --set controller.annotations."cert-manager\.io/cluster-issuer"=letsencrypt --create-namespace
 
-# for aks, append --set controller.service.externalTrafficPolicy=Local
-helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --set controller.extraArgs.default-ssl-certificate=cert-manager/weihanli-top-tls-cert --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz --create-namespace
+# for aks, append  --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
+helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --set controller.extraArgs.default-ssl-certificate=cert-manager/weihanli-top-tls-cert --set controller.annotations."cert-manager\.io/cluster-issuer"=letsencrypt --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz --create-namespace
 ```
 
 ## More
